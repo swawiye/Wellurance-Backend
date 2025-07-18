@@ -1,10 +1,10 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import RegViewSet
+from .views import *
 
 # Define the router
 router = DefaultRouter()
-router.register('users', RegViewSet) #register the tasks
+router.register('users', UserViewSet) #register the tasks
 
 # Define the url patterns
 urlpatterns = [

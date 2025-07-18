@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from .models import Register
+from .models import *
 from rest_framework import viewsets
-from .serializers import RegSerializer
+from .serializers import *
 
 # Create your views here.
-class RegViewSet(viewsets.ModelViewSet):
-    queryset = Register.objects.all() #iterates through the entire list and return everything
-    serializer_class = RegSerializer #serialize the data 
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all() #iterates through the entire list and return everything
+    serializer_class = UserSerializer #serialize the data 
