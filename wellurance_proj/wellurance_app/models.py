@@ -1,30 +1,48 @@
+from django.contrib.auth.models import AbstractUser #creating static users
 from django.db import models
 
 # Create your models here.
-class Register(models.Model):
-    # Equivalent to creating fields in a table
-    fName = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
-    dob = models.DateField(max_length=100)
-    address = models.CharField(max_length=100)
-    password = models.CharField(max_length=20)
+class User(AbstractUser):
+    ROLES = (
+        ('ADMIN', 'Administrator'),
+        ('DISPATCHER', 'Dispatcher'),
+        ('AMBULANCE', 'Ambulance Team'),
+        ('FIRE', 'Firefighter Team'),
+        ('CIVILIAN', 'Civilian'),
+    )
 
-    def __str__(self):
-        return self.fName
-    
-class LogIn(models.Model):
-    email = models.CharField(max_length=100)
-    password = models.CharField(max_length=20)
+    role = models.CharField(max_length=10, choices=ROLES, default='CIVILIAN')
+    phone = models.CharField(max_length=15)
+    profile_pic = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
+    last_location = models.PointField(null=True, blank=True) #GeoDjango
 
-    def __str__(self):
-        return self.email
-    
-class Profile(models.Model):
-    fName = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
-    dob = models.DateField(max_length=100) #make this inactive
-    address = models.CharField(max_length=100)
-    password = models.CharField(max_length=20)
+    # Querries (role & location)
+    class Meta:
+        indexes = [
+            models.Index(fields=['role']),
+            models.Index(fields=['location']),
+        ]
+        
+class User(AbstractUser):
+    ROLES = (
+        ('ADMIN', 'Administrator'),
+        ('DISPATCHER', 'Dispatcher'),
+        ('AMBULANCE', 'Ambulance Team'),
+        ('FIRE', 'Firefighter Team'),
+        ('CIVILIAN', 'Civilian'),
+    )
 
-    def __str__(self):
-        return self.fName
+    role = models.CharField(max_length=10, choices=ROLES, default='CIVILIAN')
+    phone = models.CharField(max_length=15)
+    profile_pic = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
+    last_location = models.PointField(null=True, blank=True) #GeoDjango
+
+    # Querries (role & location)
+    class Meta:
+        indexes = [
+            models.Index(fields=['role']),
+            models.Index(fields=['location']),
+        ]
+

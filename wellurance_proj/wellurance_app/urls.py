@@ -8,5 +8,5 @@ router.register('users', RegViewSet) #register the tasks
 
 # Define the url patterns
 urlpatterns = [
-    path('auth/register', RegViewSet.as_view(), name='register'),
+    path('', include(router.urls)),
 ]
