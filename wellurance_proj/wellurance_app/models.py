@@ -96,3 +96,11 @@ class EmergencyReport(models.Model):
 
     def __str__(self):
         return f"{self.emergency()} - {self.get_status_display()}"
+    
+class IncidentUpdate(models.Model):
+    status = models.CharField(max_length=100, choices=EmergencyReport.STATUS)
+    notes= models.TextField()
+    time_stamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-time_stamp']
