@@ -59,3 +59,13 @@ class ResponderTeam(models.Model):
 
     def __str__(self):
         return f"{self.get_team_display()} - {self.name}"
+    
+# Emergency & Incident Models
+class Emergency(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    icon = models.CharField(max_length=50)
+    responders = models.JSONField(default=list)
+
+    def __str__(self):
+        return self.name
