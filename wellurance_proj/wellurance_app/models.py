@@ -131,3 +131,17 @@ class Vehicle(models.Model):
 
     def __str__(self):
         return f"{self.get_vehicle_type_display()} - {self.license_plate}"
+    
+class LocationUpdate(models.Models):
+    # location = models.PointField()
+    time_stamp = models.DateTimeField(auto_now_add=True)
+    speed = models.FloatField(null=True, blank=True)
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.SET_NULL, null=True, blank=True)
+    responder = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='location_updates')
+
+    class Meta:
+        ordering = ['-time_stamp']
+        indexes = [
+            models.Index(fields=['responder']),
+            models.Index(fields=['time_stamp']),
+        ]
