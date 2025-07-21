@@ -104,3 +104,16 @@ class IncidentUpdate(models.Model):
 
     class Meta:
         ordering = ['-time_stamp']
+
+class ResponderAssignment(models.Model):
+    status = models.CharField(max_length=20, default='PENDING')
+    notes= models.TextField(blank=True)
+    assigned_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    responder_team = models.ForeignKey(ResponderTeam, on_delete=models.CASCADE)
+    incident = models.ForeignKey(EmergencyReport, on_delete=models.CASCADE, related_name='assignments')
+
+    class Meta:
+        unique_together = ('incident' - 'responder team')
+
+
