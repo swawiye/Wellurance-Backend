@@ -116,4 +116,18 @@ class ResponderAssignment(models.Model):
     class Meta:
         unique_together = ('incident' - 'responder team')
 
+class Vehicle(models.Model):
+    VEHICLE_TYPES = (
+        'AMBULANCE', 'Ambulance',
+        'FIRE_TRUCK', 'Fire Truck',
+        'SUPPORT', 'Support Vehicle',
+    )
 
+    license_plate = models.CharField(max_length=20, unique=True)
+    vehicle_type = models.CharField(max_length=100, choices=VEHICLE_TYPES)
+    team = models.ForeignKey(ResponderTeam, on_delete=models.SET_NULL, null=True, related_name='vehicles')
+    capacity = models.PositiveIntegerField()
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.get_vehicle_type_display()} - {self.license_plate}"
