@@ -65,7 +65,34 @@ class Emergency(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     icon = models.CharField(max_length=50)
-    responders = models.JSONField(default=list)
+    responders = models.JSONField(default=list) #list of the responders needed
 
     def __str__(self):
         return self.name
+    
+class EmergencyReport(models.Model):
+    STATUS = (
+        'REPORTED', 'Reported',
+        'ASSIGNED', 'Assigned',
+        'IN_PROGRESS', 'In Progress',
+        'RESOLVED', 'Resolved',
+        'CANCELLED', 'Cancelled',
+    )
+
+    # location = models.PointField()
+    address = models.TextField()
+    description = models.TextField()
+    status = models.CharField(max_length=100, choices=STATUS, default='REPORTED')
+    time_stamp = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    is_verified = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-time_stamp']
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['time_stamp']),
+        ]
+
+    def __str__(self):
+        return f"{self.emergency()} - {self.get_status_display()}"
