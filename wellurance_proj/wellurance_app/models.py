@@ -1,9 +1,9 @@
-from django.contrib.auth.models import AbstractUser #creating static users
+from django.contrib.auth.models import AbstractUser, Group, Permission #creating static users
 from django.db import models
 
 # Create your models here.
 # User Models
-class User(AbstractUser):
+class CustomUser(AbstractUser):
     ROLES = (
         ('ADMIN', 'Administrator'),
         ('DISPATCHER', 'Dispatcher'),
@@ -12,17 +12,36 @@ class User(AbstractUser):
         ('CIVILIAN', 'Civilian'),
     )
 
-    role = models.CharField(max_length=10, choices=ROLES, default='CIVILIAN')
+    role = models.CharField(max_length=20, choices=ROLES, default='CIVILIAN')
     phone = models.CharField(max_length=15)
-    profile_pic = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    # profile_pic = models.ImageField(upload_to='', null=True, blank=True) #install Pillow: python -m pip install pillow
     is_verified = models.BooleanField(default=False)
-    last_location = models.PointField(null=True, blank=True) #GeoDjango
+    # last_location = models.PointField(null=True, blank=True) #GeoDjango
+
+    groups = models.ManyToManyField(
+        Group,
+        verbose_name='groups',
+        blank= True,
+        help_text='The group this user belongs to',
+        related_name='wellurance_user_set',
+        related_query_name='wellurance_user',
+
+    )
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name='user permissions',
+        blank= True,
+        help_text='Set permissions for this user',
+        related_name='wellurance_user_set',
+        related_query_name='wellurance_user',
+    )
 
     # Querries (role & location)
     class Meta:
         indexes = [
             models.Index(fields=['role']),
-            models.Index(fields=['location']),
+            # models.Index(fields=['location']),
         ]
 
 class ResponderTeam(models.Model):
@@ -33,8 +52,8 @@ class ResponderTeam(models.Model):
 
     name = models.CharField(max_length=100)
     team = models.CharField(max_length=10, choices=TEAMS)
-    members = models.ManyToManyField(User, related_name='teams')
-    base_location = models.PointField()
+    members = models.ManyToManyField(CustomUser, related_name='teams')
+    # base_location = models.PointField()
     contact = models.CharField(max_length=15)
     is_active = models.BooleanField(default=True)
 
