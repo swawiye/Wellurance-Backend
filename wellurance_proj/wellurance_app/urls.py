@@ -20,6 +20,8 @@ router.register(r'messages', ChatMessageViewSet, basename='messages')
 # Define the url patterns
 urlpatterns = [
     path('', include(router.urls)),
-    path('auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # path('auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
     path('register/', RegView.as_view(), name='register'),
 ]

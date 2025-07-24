@@ -83,6 +83,8 @@ class EmergencyReport(models.Model):
     time_stamp = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     is_verified = models.BooleanField(default=False)
+    emergency = models.ForeignKey(Emergency, on_delete=models.SET_NULL, null=True, blank=True)
+
 
     class Meta:
         ordering = ['-time_stamp']
@@ -90,9 +92,6 @@ class EmergencyReport(models.Model):
             models.Index(fields=['status']),
             models.Index(fields=['time_stamp']),
         ]
-
-    def __str__(self):
-        return f"{self.emergency()} - {self.get_status_display()}"
     
 class IncidentUpdate(models.Model):
     status = models.CharField(max_length=100, choices=EmergencyReport.STATUS)
@@ -110,8 +109,8 @@ class ResponderAssignment(models.Model):
     responder_team = models.ForeignKey(ResponderTeam, on_delete=models.CASCADE)
     incident = models.ForeignKey(EmergencyReport, on_delete=models.CASCADE, related_name='assignments')
 
-    # class Meta:
-    #     unique_together = ('incident' - 'responder team')
+    class Meta:
+        unique_together = ('incident', 'responder team')
 
 class Vehicle(models.Model):
     VEHICLE_TYPES = [

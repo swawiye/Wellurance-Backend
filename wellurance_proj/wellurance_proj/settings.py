@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'wellurance_app',
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'wellurance_proj.urls'
@@ -127,4 +130,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'wellurance_app.CustomUser'
 
-AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', ]
+# AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+CORS_ALLOW_ALL_ORIGINS = True

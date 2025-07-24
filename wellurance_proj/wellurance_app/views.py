@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .serializers import UserSerializer, ResponderTeamSerializer, EmergencySerializer, EmergencyReportSerializer, IncidentUpdateSerializer, ResponderAssignmentSerializer, VehicleSerializer, LocationUpdateSerializer, NotificationSerializer, ChatMessageSerializer
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 class RegView(APIView):
@@ -61,33 +62,38 @@ class EmergencyViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class EmergencyReportViewSet(viewsets.ModelViewSet):
-    queryset = EmergencyReport.objects.all() #iterates through the entire list and return everything
-    serializer_class = EmergencyReportSerializer #serialize the data 
-    permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(reporter=self.request.user)
-
-    @action(detail=True, methods=['get'])
-    def updates(self, request, pk=None):
-        incident = self.get_object()
-        updates = incident.updates.all()
-        serializer = IncidentUpdateSerializer(updates, many=True)
-        return Response(serializer.data)
+    queryset = EmergencyReport.objects.all()
+    serializer_class = EmergencyReportSerializer
+    permission_classes = [IsAuthenticated]
     
-    @action(detail=True, methods=['get'])
-    def assignments(self, request, pk=None):
-        incident = self.get_object()
-        assignments = incident.assignments.all()
-        serializer = ResponderTeamSerializer(assignments, many=True)
-        return Response(serializer.data)
+# class EmergencyReportViewSet(viewsets.ModelViewSet):
+#     queryset = EmergencyReport.objects.all() #iterates through the entire list and return everything
+#     serializer_class = EmergencyReportSerializer #serialize the data 
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def perform_create(self, serializer):
+#         serializer.save(reporter=self.request.user)
+
+#     @action(detail=True, methods=['get'])
+#     def updates(self, request, pk=None):
+#         incident = self.get_object()
+#         updates = incident.updates.all()
+#         serializer = IncidentUpdateSerializer(updates, many=True)
+#         return Response(serializer.data)
     
-    @action(detail=True, methods=['get'])
-    def chat(self, request, pk=None):
-        incident = self.get_object()
-        messages = incident.messages.all()
-        serializer = ChatMessageSerializer(messages, many=True)
-        return Response(serializer.data)
+#     @action(detail=True, methods=['get'])
+#     def assignments(self, request, pk=None):
+#         incident = self.get_object()
+#         assignments = incident.assignments.all()
+#         serializer = ResponderTeamSerializer(assignments, many=True)
+#         return Response(serializer.data)
+    
+#     @action(detail=True, methods=['get'])
+#     def chat(self, request, pk=None):
+#         incident = self.get_object()
+#         messages = incident.messages.all()
+#         serializer = ChatMessageSerializer(messages, many=True)
+#         return Response(serializer.data)
 
 class IncidentUpdateViewSet(viewsets.ModelViewSet):
     queryset = IncidentUpdate.objects.all() #iterates through the entire list and return everything
