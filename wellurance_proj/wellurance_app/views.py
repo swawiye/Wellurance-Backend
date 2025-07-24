@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
-from .models import CustomUser, ResponderTeam, Emergency, EmergencyReport, IncidentUpdate, ResponderAssignment, Vehicle, LocationUpdate, Notification, ChatMessage
+from .models import CustomUser, ResponderTeam, Emergency, EmergencyReport, IncidentUpdate, ResponderAssignment, Vehicle, LocationUpdate, Notification
 from rest_framework import viewsets, permissions, status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .serializers import UserSerializer, ResponderTeamSerializer, EmergencySerializer, EmergencyReportSerializer, IncidentUpdateSerializer, ResponderAssignmentSerializer, VehicleSerializer, LocationUpdateSerializer, NotificationSerializer, ChatMessageSerializer
+from .serializers import UserSerializer, ResponderTeamSerializer, EmergencySerializer, EmergencyReportSerializer, IncidentUpdateSerializer, ResponderAssignmentSerializer, VehicleSerializer, LocationUpdateSerializer, NotificationSerializer
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -14,9 +14,7 @@ class RegView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save()
-            user.set_password(serializer.validated_data['password'])
-            user.save()
+            serializer.save()
             return Response({'message':'User registered successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -140,10 +138,3 @@ class NotificationViewSet(viewsets.ModelViewSet):
         notification.save()
         return Response({'status':'mark as read'})
 
-class ChatMessageViewSet(viewsets.ModelViewSet):
-    queryset = ChatMessage.objects.all() #iterates through the entire list and return everything
-    serializer_class = ChatMessageSerializer #serialize the data 
-    permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(sender=self.request.user)

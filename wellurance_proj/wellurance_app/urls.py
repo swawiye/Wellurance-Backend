@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import RegView, UserViewSet, ResponderTeamViewSet, EmergencyViewSet, EmergencyReportViewSet, IncidentUpdateViewSet, ResponderAssignmentViewSet, VehicleViewSet, LocationUpdateViewSet, NotificationViewSet, ChatMessageViewSet
+from .views import RegView, UserViewSet, ResponderTeamViewSet, EmergencyViewSet, EmergencyReportViewSet, IncidentUpdateViewSet, ResponderAssignmentViewSet, VehicleViewSet, LocationUpdateViewSet, NotificationViewSet
 from .models import CustomUser
 from .serializers import UserSerializer
 
@@ -15,13 +15,11 @@ router.register(r'assignments', ResponderAssignmentViewSet, basename='assignment
 router.register(r'vehicles', VehicleViewSet, basename='vehicles')
 router.register(r'locations', LocationUpdateViewSet, basename='locations')
 router.register(r'notifications', NotificationViewSet, basename='notifications')
-router.register(r'messages', ChatMessageViewSet, basename='messages')
 
 # Define the url patterns
 urlpatterns = [
     path('', include(router.urls)),
     # path('auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
+    path('auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('register/', RegView.as_view(), name='register'),
 ]

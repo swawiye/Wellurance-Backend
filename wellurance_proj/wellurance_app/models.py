@@ -162,13 +162,3 @@ class Notification(models.Model):
         indexes = [
             models.Index(fields=['user', 'is_read']),
         ]
-
-class ChatMessage(models.Model):
-    incident = models.ForeignKey(EmergencyReport, on_delete=models.CASCADE, related_name='messages')
-    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    message = models.TextField()
-    time_stamp = models.DateTimeField(auto_now_add=True)
-    is_system = models.BooleanField(default=True)
-
-    class Meta:
-        ordering = ['-time_stamp']

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, ResponderTeam, Emergency, EmergencyReport, IncidentUpdate, ResponderAssignment, Vehicle, LocationUpdate, Notification, ChatMessage
+from .models import CustomUser, ResponderTeam, Emergency, EmergencyReport, IncidentUpdate, ResponderAssignment, Vehicle, LocationUpdate, Notification
 import re
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
             email = validated_data['email'],
             phone = validated_data['phone'],
             role = validated_data.get('role', 'CIVILIAN'),
-            is_verified = validated_data('is_verified', False), 
+            is_verified = validated_data.get('is_verified', False), 
         )
         user.set_password(validated_data['password'])
         user.save()
@@ -67,8 +67,3 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = '__all__'
 
-class ChatMessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)
-    class Meta:
-        model = ChatMessage
-        fields = '__all__'
