@@ -84,7 +84,7 @@ class EmergencyReport(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     is_verified = models.BooleanField(default=False)
     emergency = models.ForeignKey(Emergency, on_delete=models.SET_NULL, null=True, blank=True)
-
+    reporter = models.ForeignKey('CustomUser', on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         ordering = ['-time_stamp']
@@ -106,11 +106,11 @@ class ResponderAssignment(models.Model):
     notes= models.TextField(blank=True)
     assigned_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     assigned_at = models.DateTimeField(auto_now_add=True)
-    responder_team = models.ForeignKey(ResponderTeam, on_delete=models.CASCADE)
+    # responder_team = models.ForeignKey(ResponderTeam, on_delete=models.CASCADE)
     incident = models.ForeignKey(EmergencyReport, on_delete=models.CASCADE, related_name='assignments')
 
-    class Meta:
-        unique_together = ('incident', 'responder team')
+    # class Meta:
+    #     unique_together = ('incident', 'responder team')
 
 class Vehicle(models.Model):
     VEHICLE_TYPES = [

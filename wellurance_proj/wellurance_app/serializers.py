@@ -13,11 +13,12 @@ class UserSerializer(serializers.ModelSerializer):
             username =validated_data['username'], 
             email = validated_data['email'],
             phone = validated_data['phone'],
-            role = validated_data('role', 'CIVILIAN'),
+            role = validated_data.get('role', 'CIVILIAN'),
             is_verified = validated_data('is_verified', False), 
         )
-        user.set_password(validated_data=['password'])
+        user.set_password(validated_data['password'])
         user.save()
+        return user
 
 
     def validatePass(password):
@@ -39,6 +40,7 @@ class EmergencyReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmergencyReport
         fields = '__all__'
+        read_only_fields = ['reporter']
 
 class IncidentUpdateSerializer(serializers.ModelSerializer):
     class Meta:

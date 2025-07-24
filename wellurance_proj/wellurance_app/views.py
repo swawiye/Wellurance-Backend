@@ -65,6 +65,8 @@ class EmergencyReportViewSet(viewsets.ModelViewSet):
     queryset = EmergencyReport.objects.all()
     serializer_class = EmergencyReportSerializer
     permission_classes = [IsAuthenticated]
+    def perform_create(self, serializer):
+        serializer.save(reporter=self.request.user)
     
 # class EmergencyReportViewSet(viewsets.ModelViewSet):
 #     queryset = EmergencyReport.objects.all() #iterates through the entire list and return everything
@@ -109,7 +111,7 @@ class ResponderAssignmentViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(assigned_by=self.reuqest.user)
+        serializer.save(assigned_by=self.request.user)
 
 class VehicleViewSet(viewsets.ModelViewSet):
     queryset = Vehicle.objects.all() #iterates through the entire list and return everything
