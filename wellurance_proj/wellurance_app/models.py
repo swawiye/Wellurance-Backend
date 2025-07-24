@@ -4,13 +4,10 @@ from django.db import models
 # Create your models here.
 # User Models
 class CustomUser(AbstractUser):
-    ROLES = (
-        ('ADMIN', 'Administrator'),
+    ROLES = [
         ('DISPATCHER', 'Dispatcher'),
-        ('AMBULANCE', 'Ambulance Team'),
-        ('FIRE', 'Firefighter Team'),
         ('CIVILIAN', 'Civilian'),
-    )
+    ]
 
     role = models.CharField(max_length=20, choices=ROLES, default='CIVILIAN')
     phone = models.CharField(max_length=15)
@@ -45,10 +42,10 @@ class CustomUser(AbstractUser):
         ]
 
 class ResponderTeam(models.Model):
-    TEAMS = (
+    TEAMS = [
         ('AMBULANCE', 'Ambulance'),
         ('FIRE', 'Firefighter'),
-    )
+    ]
 
     name = models.CharField(max_length=100)
     team = models.CharField(max_length=10, choices=TEAMS)
@@ -71,13 +68,13 @@ class Emergency(models.Model):
         return self.name
     
 class EmergencyReport(models.Model):
-    STATUS = (
-        'REPORTED', 'Reported',
-        'ASSIGNED', 'Assigned',
-        'IN_PROGRESS', 'In Progress',
-        'RESOLVED', 'Resolved',
-        'CANCELLED', 'Cancelled',
-    )
+    STATUS = [
+        ('REPORTED', 'Reported'),
+        ('ASSIGNED', 'Assigned'),
+        ('IN_PROGRESS', 'In Progress'),
+        ('RESOLVED', 'Resolved'),
+        ('CANCELLED', 'Cancelled'),
+    ]
 
     # location = models.PointField()
     address = models.TextField()
@@ -113,15 +110,15 @@ class ResponderAssignment(models.Model):
     responder_team = models.ForeignKey(ResponderTeam, on_delete=models.CASCADE)
     incident = models.ForeignKey(EmergencyReport, on_delete=models.CASCADE, related_name='assignments')
 
-    class Meta:
-        unique_together = ('incident' - 'responder team')
+    # class Meta:
+    #     unique_together = ('incident' - 'responder team')
 
 class Vehicle(models.Model):
-    VEHICLE_TYPES = (
-        'AMBULANCE', 'Ambulance',
-        'FIRE_TRUCK', 'Fire Truck',
-        'SUPPORT', 'Support Vehicle',
-    )
+    VEHICLE_TYPES = [
+        ('AMBULANCE', 'Ambulance'),
+        ('FIRE_TRUCK', 'Fire Truck'),
+        ('SUPPORT', 'Support Vehicle'),
+    ]
 
     license_plate = models.CharField(max_length=20, unique=True)
     vehicle_type = models.CharField(max_length=100, choices=VEHICLE_TYPES)
@@ -132,7 +129,7 @@ class Vehicle(models.Model):
     def __str__(self):
         return f"{self.get_vehicle_type_display()} - {self.license_plate}"
     
-class LocationUpdate(models.Models):
+class LocationUpdate(models.Model):
     # location = models.PointField()
     time_stamp = models.DateTimeField(auto_now_add=True)
     speed = models.FloatField(null=True, blank=True)
@@ -147,11 +144,11 @@ class LocationUpdate(models.Models):
         ]
 
 class Notification(models.Model):
-    NOTIFICATION_TYPES = (
-        'EMERGENCY_ASSIGNED', 'Emergency Assigned',
-        'STATUS_UPDATE', 'Status Update',
-        'SYSTEM_ALERT', 'System Alert',
-    )
+    NOTIFICATION_TYPES = [
+        ('EMERGENCY_ASSIGNED', 'Emergency Assigned'),
+        ('STATUS_UPDATE', 'Status Update'),
+        ('SYSTEM_ALERT', 'System Alert'),
+    ]
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications')
     notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)

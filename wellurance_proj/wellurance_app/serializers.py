@@ -1,11 +1,28 @@
 from rest_framework import serializers
 from .models import CustomUser, ResponderTeam, Emergency, EmergencyReport, IncidentUpdate, ResponderAssignment, Vehicle, LocationUpdate, Notification, ChatMessage
+import re
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta: #serialize all the fields
         model = CustomUser
-        fields = ['id', 'username', 'email', 'role', 'phone', 'is_verified'] # 'profile_pic', 'location'
+        fields = ['id', 'username', 'email', 'password', 'role', 'phone', 'is_verified'] # 'profile_pic', 'location'
         extra_kwargs = {'password' : {'write_only':True}}
+
+    def create(self, validated_data):
+        user = CustomUser(
+            username =validated_data['username'], 
+            email = validated_data['email'],
+            phone = validated_data['phone'],
+            role = validated_data('role', 'CIVILIAN'),
+            is_verified = validated_data('is_verified', False), 
+        )
+        user.set_password(validated_data=['password'])
+        user.save()
+
+
+    def validatePass(password):
+        pattern = r"/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/"
+        match = re.match(pattern, password)
 
 class ResponderTeamSerializer(serializers.ModelSerializer):
     members = UserSerializer(many=True, read_only=True)
