@@ -1,8 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import RegView, UserViewSet, ResponderTeamViewSet, EmergencyViewSet, EmergencyReportViewSet, IncidentUpdateViewSet, ResponderAssignmentViewSet, VehicleViewSet, LocationUpdateViewSet, NotificationViewSet
-from .models import CustomUser
-from .serializers import UserSerializer
+from .views import RegView, LoginView, UserViewSet, ResponderTeamViewSet, EmergencyViewSet, EmergencyReportViewSet, IncidentUpdateViewSet, ResponderAssignmentViewSet, VehicleViewSet, LocationUpdateViewSet, NotificationViewSet
 
 # Define the router
 router = DefaultRouter()
@@ -22,4 +20,5 @@ urlpatterns = [
     # path('auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('register/', RegView.as_view(), name='register'),
+    path('login/', LoginView.as_view(), name='login'),
 ]

@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth.decorators import permission_required
 from .models import CustomUser, ResponderTeam, Emergency, EmergencyReport, IncidentUpdate, ResponderAssignment, Vehicle, LocationUpdate, Notification
 from rest_framework import viewsets, permissions, status
 from rest_framework.viewsets import ModelViewSet
@@ -8,6 +9,7 @@ from rest_framework.response import Response
 from .serializers import UserSerializer, ResponderTeamSerializer, EmergencySerializer, EmergencyReportSerializer, IncidentUpdateSerializer, ResponderAssignmentSerializer, VehicleSerializer, LocationUpdateSerializer, NotificationSerializer
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
 
 # Create your views here.
 class RegView(APIView):
@@ -17,6 +19,23 @@ class RegView(APIView):
             serializer.save()
             return Response({'message':'User registered successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if not username or not email or not password:
+            return Response({'error':'Username, email and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = authenticate(request, username=username, email=email, password=password)
+
+        if user is not None:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'message':'Login successful', 'token':token.key}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error':'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all() #iterates through the entire list and return everything
@@ -34,6 +53,15 @@ class UserViewSet(viewsets.ModelViewSet):
         responders = CustomUser.objects.filter(role__in=['AMBULANCE', 'FIRE'])
         serializer = self.get.get_serializer(responders, many=True)
         return Response(serializer.data)
+    
+    @permission_required('auth.change_user')
+    def admin_dash(request):
+        return render(request, 'http://localhost:5173/admindash')
+
+        if request.user.groups.filter(role='DISPATCHER').exists():
+            return render(request, 'http://localhost:5173/admindash')
+        else:
+            Response({'error':'Permission required'}, status=status.HTTP_401_UNAUTHORIZED)
     
 class ResponderTeamViewSet(viewsets.ModelViewSet):
     queryset = ResponderTeam.objects.all() #iterates through the entire list and return everything
