@@ -42,6 +42,10 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer #serialize the data 
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
     @action(detail=False, methods=['get'])
     def dispatchers(self, request):
         dispatchers = CustomUser.objects.filter(role='DISPATCHER')
@@ -62,6 +66,13 @@ class UserViewSet(viewsets.ModelViewSet):
             return render(request, 'http://localhost:5173/admindash')
         else:
             Response({'error':'Permission required'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class UserDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
     
 class ResponderTeamViewSet(viewsets.ModelViewSet):
     queryset = ResponderTeam.objects.all() #iterates through the entire list and return everything
