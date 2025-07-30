@@ -5,7 +5,7 @@ import re
 class UserSerializer(serializers.ModelSerializer):
     class Meta: #serialize all the fields
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'role', 'phone', 'is_verified'] # 'profile_pic', 'location'
+        fields = ['id', 'username', 'email', 'password', 'role', 'phone', 'is_verified', 'address'] # 'profile_pic', 'location'
         extra_kwargs = {'password' : {'write_only':True}}
 
     def create(self, validated_data):
@@ -21,9 +21,20 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-    def validatePass(password):
+    def validate_pass(self, value):
         pattern = r"/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/"
-        match = re.match(pattern, password)
+        if not re.match(pattern, value):
+            raise serializers.ValidationError("Password must be at least 8 characters and include uppercase, lowercase, number and special character")
+        return value
+    
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            if attr == 'password':
+                instance.set_password(value)
+            else:
+                setattr(instance, attr, value)
+        instance.save()
+        return instance
 
 class ResponderTeamSerializer(serializers.ModelSerializer):
     members = UserSerializer(many=True, read_only=True)
